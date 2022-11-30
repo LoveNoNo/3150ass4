@@ -115,7 +115,7 @@ __device__ u32 fs_open(FileSystem *fs, char *s, int op)
     //return (FILE_BASE_ADDRESS + (fs->freeBlockPointer -1)*32); // 1 block = 32 KB
 
     // 第一位，若FCB index>1000，则最高位加2， 最后三位是fcb的后三位，表示0-999的FCB index，中间是正常的 volumn disk指针
-    fpReturn = 2000000000*(fileThisP/1000) + (FILE_BASE_ADDRESS + (fs->freeBlockPointer -1)*32)*1000 + fileThisP%1000;
+    fpReturn = 2000000000*(fileThisP/1000) + (fs->FILE_BASE_ADDRESS + (fs->freeBlockPointer -1)*32)*1000 + fileThisP%1000;
     return fpReturn;
 
     // 返回的指针包含 Base Address，可以直接放入 volume[] 数组当中
@@ -124,7 +124,7 @@ __device__ u32 fs_open(FileSystem *fs, char *s, int op)
   // 已经存在文件，返回读/写指针
 
     // return fp: volum[n] array中的准确标号位置n, n从0开始
-    fpReturn = 2000000000*(fileThisP/1000) + (FILE_BASE_ADDRESS + fileThisStartBlock*32)*1000 + fileThisP%1000;
+    fpReturn = 2000000000*(fileThisP/1000) + (fs->FILE_BASE_ADDRESS + fileThisStartBlock*32)*1000 + fileThisP%1000;
     return fpReturn;
 
     //return (FILE_BASE_ADDRESS + fileThisStartBlock*32); 
