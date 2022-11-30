@@ -65,11 +65,11 @@ __device__ u32 fs_open(FileSystem *fs, char *s, int op)
   bool createNewF = 1; // TRUE if open as write mode and no file found
   int fileThisStartBlock; //记录已打开文件的，从匹配的FCB中获得的 Start Block numebr
   u32 fpReturn; // 存储 return 的fp 值
+  int breakLoop = 0;
 
   fileThisP = fs->fileFcbPointer; // when create new file, FcbPointer ++ 
 
   // 文件名解析：FCB检索
-  outer:
   for(int i=0; i<sizeof(s); i++){ 
     //文件名检索，确认是否已打开文件
     if(i==0 && op==1){ //只有读模式下才会创建空白新文件
@@ -82,10 +82,12 @@ __device__ u32 fs_open(FileSystem *fs, char *s, int op)
 
             // 提取该文件start block信息
             fileThisStartBlock = fs->volume[4096 + j*32 + 20]*255 + fs->volume[4096 + j*32 + 21];
-            break outer;
+            breakLoop = 1;
+            break;
           }
         }
       }
+      if(breakLoop == 0){break;}
     }
 
     //创建新文件：文件名存储入FCB
