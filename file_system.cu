@@ -1,4 +1,4 @@
-﻿#include "file_system.h"
+#include "file_system.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <stdio.h>
@@ -260,7 +260,7 @@ __device__ void fs_gsys(FileSystem *fs, int op)
       }
 
       // 根据index 提取file name 并且printf
-      for(k=0; k<20; k++){
+      for(int k=0; k<20; k++){
         printf("%d", fs->volume[4096 + fcbIndex[maxOne]*32 + k]);
       }
       printf("\n");
@@ -293,13 +293,12 @@ __device__ void fs_gsys(FileSystem *fs, int op)
     // 根据size顺序print文件名&Size
     for(int i=0; i<bufferP; i++){ //bufferP 记录FCB中文件数量
       int maxSize = 0;
-      int maxCreateT = 0;
       int maxOne = 0;
 
       for(int j=0; j<bufferP; j++){
         // 遍历：找到Size最大, 且 create Time最小 的那个
         if(propertyOrder[j] > maxSize){
-          max = propertyOrder[j];
+          maxSize = propertyOrder[j];
           maxOne = j;
         }else if(propertyOrder[j] == maxSize){
           if(createTOrder[j] < createTOrder[maxOne]){ //相同的这个比之前createTime小，则优先printf
@@ -309,7 +308,7 @@ __device__ void fs_gsys(FileSystem *fs, int op)
       }
 
       // 根据index 提取file name，并且printf Name 和 Size
-      for(k=0; k<20; k++){
+      for(int k=0; k<20; k++){
         printf("%d", fs->volume[4096 + fcbIndex[maxOne]*32 + k]);
       }
       printf("  %d\n", propertyOrder[maxOne]);
@@ -374,7 +373,7 @@ __device__ void fs_gsys(FileSystem *fs, int op, char *s)
 
   //修改后续所有文件的FCB：确认一下哪些文件需要修改：start模块大于当前start的才需要修改 
   for(int i=0; i<1024; i++){
-    fcbStartB = fs->volume[4096 + i*32 + 20]*255 + fs->volume[4096 + i*32 + 21]
+    fcbStartB = fs->volume[4096 + i*32 + 20]*255 + fs->volume[4096 + i*32 + 21];
     if(fcbStartB > startBlock){
       fcbStartB = fcbStartB - blockLength;
       //重新修改start值，等于原值减去 删除文件的 block length
